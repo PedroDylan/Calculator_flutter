@@ -14,6 +14,7 @@ class Calculator extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Calculator",
+      theme: ThemeData(primaryColor: Colors.black54),
       home: SimpleCalculator(),
     );
   }
@@ -38,7 +39,9 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
             calculation(btntxt);
           },
           style: ElevatedButton.styleFrom(
-              shape: CircleBorder(), foregroundColor: btncolor),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              backgroundColor: btncolor),
           child: Text(
             btntxt,
             style: TextStyle(fontSize: 32, color: txtcolor),
@@ -62,12 +65,12 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    child: Padding(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
                         padding: EdgeInsets.all(10),
                         child: Text(
                           '$text',
@@ -76,9 +79,9 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
                             color: Colors.white,
                             fontSize: 100,
                           ),
-                        )),
-                  )
-                ],
+                        ))
+                  ],
+                ),
               ),
             ),
             Row(
