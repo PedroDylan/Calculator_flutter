@@ -1,8 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
 
 void main() {
-  runApp(const Calculator());
+  runApp(Calculator());
 }
 
 class Calculator extends StatelessWidget {
@@ -13,8 +14,7 @@ class Calculator extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Calculator",
-      theme: ThemeData(primarySwatch: Colors.blueGrey),
-      home: const SimpleCalculator(),
+      home: SimpleCalculator(),
     );
   }
 }
@@ -27,74 +27,22 @@ class SimpleCalculator extends StatefulWidget {
 }
 
 class _SimpleCalculatorState extends State<SimpleCalculator> {
-  String equation = '0';
-  String result = '0';
-  String expression = '';
-  double equationFontSize = 38.0;
-  double resultFontSize = 48.0;
+  dynamic displaytxt = 20;
 
-  buttonPressed(String buttonText) {
-    setState(() {
-      if (buttonText == "C") {
-        equation = "0";
-        result = '0';
-        equationFontSize = 38.0;
-        resultFontSize = 48.0;
-      } else if (buttonText == "⌫") {
-        equationFontSize = 48.0;
-        resultFontSize = 38.0;
-        equation = equation.substring(0, equation.length - 1);
-        if (equation == '') {
-          equation = '0';
-        }
-      } else if (buttonText == "=") {
-        equationFontSize = 38.0;
-        resultFontSize = 48.0;
-
-        expression = equation;
-        expression = expression.replaceAll("X", '*');
-
-        try {
-          Parser p = Parser();
-          Expression exp = p.parse(expression);
-
-          ContextModel cm = ContextModel();
-          result = "${exp.evaluate(EvaluationType.REAL, cm)}";
-        } catch (e) {
-          result = "Error";
-        }
-      } else {
-        equationFontSize = 48.0;
-        resultFontSize = 38.0;
-        if (equation == "0") {
-          equation = buttonText;
-        } else {
-          equation = equation + buttonText;
-        }
-      }
-    });
-  }
-
-  Widget buildButton(
-      String buttonText, double buttonHeight, Color buttoncolor) {
+  Widget calcbutton(String btntxt, Color btncolor, Color txtcolor) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1 * buttonHeight,
-      color: buttoncolor,
-      child: ElevatedButton(
-        onPressed: () => buttonPressed(buttonText),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: buttoncolor,
-          fixedSize: const Size(50, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: ElevatedButton(
+          onPressed: () {
+            calculation(btntxt);
+          },
+          style: ElevatedButton.styleFrom(
+              shape: CircleBorder(), foregroundColor: btncolor),
+          child: Text(
+            btntxt,
+            style: TextStyle(fontSize: 32, color: txtcolor),
           ),
-        ),
-        child: Text(
-          buttonText,
-          style: const TextStyle(
-              fontSize: 38.0,
-              fontWeight: FontWeight.normal,
-              color: Colors.white),
         ),
       ),
     );
@@ -103,82 +51,215 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("Ajudador de burros"),
+        title: Text("Calculator"),
+        backgroundColor: Colors.black,
       ),
-      body: Column(children: [
-        Container(
-          alignment: Alignment.centerRight,
-          child: Text(
-            equation,
-            style: TextStyle(fontSize: equationFontSize),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          child: Text(
-            result,
-            style: TextStyle(fontSize: resultFontSize),
-          ),
-        ),
-        const Expanded(child: Divider()),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.75,
-              child: Table(
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TableRow(children: [
-                    buildButton("C", 1, Colors.redAccent),
-                    buildButton("⌫", 1, Colors.blue),
-                    buildButton("/", 1, Colors.blue),
-                  ]),
-                  TableRow(children: [
-                    buildButton("7", 1, Colors.blueGrey),
-                    buildButton("8", 1, Colors.blueGrey),
-                    buildButton("9", 1, Colors.blueGrey),
-                  ]),
-                  TableRow(children: [
-                    buildButton("4", 1, Colors.blueGrey),
-                    buildButton("5", 1, Colors.blueGrey),
-                    buildButton("6", 1, Colors.blueGrey),
-                  ]),
-                  TableRow(children: [
-                    buildButton("1", 1, Colors.blueGrey),
-                    buildButton("2", 1, Colors.blueGrey),
-                    buildButton("3", 1, Colors.blueGrey),
-                  ]),
-                  TableRow(children: [
-                    buildButton(".", 1, Colors.blueGrey),
-                    buildButton("0", 1, Colors.blueGrey),
-                    buildButton("00", 1, Colors.blueGrey),
-                  ]),
+                  Container(
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          '$text',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 100,
+                          ),
+                        )),
+                  )
                 ],
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                calcbutton('AC', Colors.grey, Colors.black),
+                calcbutton('+/-', Colors.grey, Colors.black),
+                calcbutton('%', Colors.grey, Colors.black),
+                calcbutton('/', Colors.amber, Colors.white),
+              ],
+            ),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.25,
-              child: Table(
-                children: [
-                  TableRow(children: [
-                    buildButton("X", 1, Colors.blue),
-                  ]),
-                  TableRow(children: [
-                    buildButton("-", 1, Colors.blue),
-                  ]),
-                  TableRow(children: [
-                    buildButton("+", 1, Colors.blue),
-                  ]),
-                  TableRow(children: [
-                    buildButton("=", 2, Colors.blue),
-                  ])
-                ],
-              ),
-            )
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcbutton('7', Colors.grey, Colors.white),
+                calcbutton('8', Colors.grey, Colors.white),
+                calcbutton('9', Colors.grey, Colors.white),
+                calcbutton('x', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcbutton('4', Colors.grey, Colors.white),
+                calcbutton('5', Colors.grey, Colors.white),
+                calcbutton('6', Colors.grey, Colors.white),
+                calcbutton('-', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                calcbutton('1', Colors.grey, Colors.white),
+                calcbutton('2', Colors.grey, Colors.white),
+                calcbutton('3', Colors.grey, Colors.white),
+                calcbutton('+', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    calculation("0");
+                  },
+                  style: ElevatedButton.styleFrom(
+                      shape: StadiumBorder(), backgroundColor: Colors.grey),
+                  child: Text(
+                    '0',
+                    style: TextStyle(fontSize: 35, color: Colors.white),
+                  ),
+                ),
+                calcbutton('.', Colors.grey, Colors.white),
+                calcbutton('=', Colors.amber, Colors.white),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
           ],
-        )
-      ]),
+        ),
+      ),
     );
+  }
+
+  dynamic text = '0';
+  double numOne = 0;
+  double numTwo = 0;
+
+  dynamic result = '';
+  dynamic finalResult = '';
+  dynamic opr = '';
+  dynamic preOpr = '';
+  void calculation(btnText) {
+    if (btnText == 'AC') {
+      text = '0';
+      numOne = 0;
+      numTwo = 0;
+      result = '';
+      finalResult = '0';
+      opr = '';
+      preOpr = '';
+    } else if (opr == '=' && btnText == '=') {
+      if (preOpr == '+') {
+        finalResult = add();
+      } else if (preOpr == '-') {
+        finalResult = sub();
+      } else if (preOpr == 'x') {
+        finalResult = mul();
+      } else if (preOpr == '/') {
+        finalResult = div();
+      }
+    } else if (btnText == '+' ||
+        btnText == '-' ||
+        btnText == 'x' ||
+        btnText == '/' ||
+        btnText == '=') {
+      if (numOne == 0) {
+        numOne = double.parse(result);
+      } else {
+        numTwo = double.parse(result);
+      }
+
+      if (opr == '+') {
+        finalResult = add();
+      } else if (opr == '-') {
+        finalResult = sub();
+      } else if (opr == 'x') {
+        finalResult = mul();
+      } else if (opr == '/') {
+        finalResult = div();
+      }
+      preOpr = opr;
+      opr = btnText;
+      result = '';
+    } else if (btnText == '%') {
+      result = numOne / 100;
+      finalResult = doesContainDecimal(result);
+    } else if (btnText == '.') {
+      if (!result.toString().contains('.')) {
+        result = '$result.';
+      }
+      finalResult = result;
+    } else if (btnText == '+/-') {
+      result.toString().startsWith('-')
+          ? result = result.toString().substring(1)
+          : result = '-$result';
+      finalResult = result;
+    } else {
+      result = result + btnText;
+      finalResult = result;
+    }
+
+    setState(() {
+      text = finalResult;
+    });
+  }
+
+  String add() {
+    result = (numOne + numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String sub() {
+    result = (numOne - numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String mul() {
+    result = (numOne * numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String div() {
+    result = (numOne / numTwo).toString();
+    numOne = double.parse(result);
+    return doesContainDecimal(result);
+  }
+
+  String doesContainDecimal(dynamic result) {
+    if (result.toString().contains('.')) {
+      List<String> splitDecimal = result.toString().split('.');
+      if (!(int.parse(splitDecimal[1]) > 0)) {
+        return result = splitDecimal[0].toString();
+      }
+    }
+    return result;
   }
 }
